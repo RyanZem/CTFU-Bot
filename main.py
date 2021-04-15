@@ -18,15 +18,31 @@ async def kick(ctx, user: discord.Member, *, reason="No reason provided!"):
         await ctx.channel.send(embed=kick)
         await user.send(embed=kick)
 
-@bot.command(pass_context = True)
-async def mute(ctx, member: discord.Member):
-     if ctx.message.author.server_permissions.administrator or ctx.message.author.id == '194151340090327041':
-        role = discord.utils.get(member.server.roles, name='Muted')
-        await bot.add_roles(member, role)
-        embed=discord.Embed(title="User Muted!", description="**{0}** was muted by **{1}**!".format(member, ctx.message.author), color=0xff00f6)
-        await bot.say(embed=embed)
-     else:
-        embed=discord.Embed(title="Permission Denied.", description="You don't have permission to use this command.", color=0xff00f6)
-        await bot.say(embed=embed)        
+@bot.command(description="Mutes the specified user.")
+@commands.has_permissions(manage_messages=True)
+async def mute(ctx, member: discord.Member, *, reason=None):
+    guild = ctx.guild
+    mutedRole = discord.utils.get(guild.roles, name="Muted")
+
+    if not mutedRole:
+        mutedRole = await guild.create_role(name="Muted")
+
+        for channel in guild.channels:
+            await channel.set_permissions(mutedRole, speak=False, send_messages=False, read_message_history=True, read_messages=False)
+    embed = discord.Embed(title="muted", description=f"{member.mention} was muted ", colour=discord.Colour.light_gray())
+    embed.add_field(name="reason:", value=reason, inline=False)
+    await ctx.send(embed=embed)
+    await member.add_roles(mutedRole, reason=reason)
+    await member.send(f" you have been muted from: {guild.name} reason: {reason}")
+    
+@bot.command(description="Unmutes a specified user.")
+@commands.has_permissions(manage_messages=True)
+async def unmute(ctx, member: discord.Member):
+   mutedRole = discord.utils.get(ctx.guild.roles, name="Muted")
+
+   await member.remove_roles(mutedRole)
+   await member.send(f" you have unmutedd from: - {ctx.guild.name}")
+   embed = discord.Embed(title="unmute", description=f" unmuted-{member.mention}",colour=discord.Colour.light_gray())
+   await ctx.send(embed=embed)    
 
 bot.run(TOKEN)
