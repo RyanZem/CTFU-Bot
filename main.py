@@ -2,8 +2,8 @@ import discord
 
 bot.run(TOKEN)
 
-@commands.has_permissions(kick_members=True)
 @bot.command()
+@commands.has_permissions(kick_members=True)
 async def kick(ctx, user: discord.Member, *, reason="No reason provided!"):
         await user.kick(reason=reason)
         kick = discord.Embed(title=f":boot: Kicked {user.name}!", description=f"Reason: {reason}\nBy: {ctx.author.mention}")
