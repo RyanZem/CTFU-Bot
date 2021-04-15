@@ -4,8 +4,8 @@ from discord.ext import commands
 bot = commands.Bot(command_prefix="-")
 
 @bot.event
-async def on_message(ctx):
-    if "hi ctfu bot" in message.content.lower():
+async def on_message(ctx, message):
+    if message.content.lower() == "hi ctfu bot":
         await ctx.send("Hello! :wave:")
 
 
