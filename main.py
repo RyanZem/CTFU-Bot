@@ -5,7 +5,7 @@ bot = commands.Bot(command_prefix="-")
 
 @bot.event
 async def on_message(ctx):
-    if message.content.lower() == "hi ctfu bot":
+    if "hi ctfu bot" in message.content.lower():
         await ctx.send("Hello! :wave:")
 
 
